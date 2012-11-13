@@ -1,16 +1,21 @@
 namespace :airbrake do
+
+  def initializer(filename=nil)
+    if filename
+      Pathname.new(filename)
+    elsif defined?(Rails.root)
+      Rails.root.join('config', 'initializers', 'airbrake.rb')
+    end
+  end
+
   desc "Notify Airbrake of a new deploy."
-  task :deploy do
+  task :deploy, :initializer_file do |t, args|
     require 'airbrake_tasks'
 
-    if defined?(Rails.root)
-      initializer_file = Rails.root.join('config', 'initializers','airbrake.rb')
-
-      if initializer_file.exist?
-        load initializer_file
-      else
-        Rake::Task[:environment].invoke
-      end
+    if initializer = initializer(args[:initializer_file]) && initializer.exists?
+      load initializer
+    else
+      Rake::Task[:environment].invoke
     end
 
     AirbrakeTasks.deploy(:rails_env      => ENV['TO'],
