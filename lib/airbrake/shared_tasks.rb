@@ -1,6 +1,6 @@
 namespace :airbrake do
 
-  def initializer(filename=nil)
+  def find_initializer(filename=nil)
     if filename
       Pathname.new(filename)
     elsif defined?(Rails.root)
@@ -12,7 +12,7 @@ namespace :airbrake do
   task :deploy, :initializer_file do |t, args|
     require 'airbrake_tasks'
 
-    if initializer = initializer(args[:initializer_file]) && initializer.exists?
+    if (initializer = find_initializer(args[:initializer_file])) && initializer.exists?
       load initializer
     else
       Rake::Task[:environment].invoke
