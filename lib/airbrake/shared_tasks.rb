@@ -12,7 +12,7 @@ namespace :airbrake do
   task :deploy, :initializer_file do |t, args|
     require 'airbrake_tasks'
 
-    if (initializer = find_initializer(args[:initializer_file])) && initializer.exists?
+    if (initializer = find_initializer(args[:initializer_file])) && initializer.exist?
       load initializer
     else
       Rake::Task[:environment].invoke
